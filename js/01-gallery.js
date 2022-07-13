@@ -11,3 +11,10 @@ import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
 console.log(galleryItems);
+const galleryRef = document.querySelector('.gallery');
+createGallery();
+
+galleryRef.addEventListener('click', onGalleryclick);
+function onGalleryclick(i) {
+    i.preventDefault();
+}
