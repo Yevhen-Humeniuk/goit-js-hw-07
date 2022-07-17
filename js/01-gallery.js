@@ -10,11 +10,68 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-console.log(galleryItems);
 const galleryRef = document.querySelector('.gallery');
 createGallery();
 
-galleryRef.addEventListener('click', onGalleryclick);
-function onGalleryclick(i) {
+galleryRef.addEventListener('click', onGalleryClk);
+
+function onGalleryClk(i) {
     i.preventDefault();
+    
+    if (!i.target.dataset.source) return;
+
+    const instanceOptions = {
+        onShow: instance => {
+            document.addEventListener('keyup', fnShow);
+        },
+        onClose: instance => { 
+            document.removeEventListener('keyup', fnShow);
+        },
+    };
+
+    const instance = basicLightbox.create(`
+            <img src="${i.target.dataset.source}" width="800" height="600">
+        `, instanceOptions);
+    
+    const fnShow = onKeyPress(instance);
+    instance.show();
+
+};
+
+function onKeyPress(instance) {
+    return (i) => {
+        if (i.code === 'Escape') {
+            instance.close();
+        };
+    }
 }
+
+function createGallery() {
+    const galleryMarkup = galleryItems.map(createGaleryItemMarkup).join("");
+
+    galleryRef.insertAdjacentHTML('afterbegin', galleryMarkup);
+}
+
+
+
+function createGaleryItemMarkup({ preview, original, description }) {
+    return `<div class="gallery__item"><a class="gallery__link" 
+    href="${original}">
+    <img class="gallery__image" 
+    src="${preview}" 
+    data-source="${original}" 
+    alt="${description}"/>
+    </a>
+    </div>`;
+}
+
+// function createGallery(array) {
+//     return array.ruduce((acc, link) => acc +`<div class="gallery__item"><a class="gallery__link" 
+//     //     href="${original}">
+//     //     <img class="gallery__image" 
+//     //     src="${preview}" 
+//     //     data-source="${original}" 
+//     //     alt="${description}"/>
+//     //     </a>
+//     //     </div>`, "");
+// }
